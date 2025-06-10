@@ -1,0 +1,13 @@
+User-agent: *
+Allow: /
+Allow: /signup
+Allow: /signin
+Allow: /about
+Allow: /privacy
+Allow: /terms
+
+Disallow: /dashboard
+Disallow: /api/
+Disallow: /admin/
+
+Sitemap: https://faithlink.app/sitemap.xml
