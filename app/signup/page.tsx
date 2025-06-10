@@ -43,8 +43,12 @@ export default function SignUpPage() {
     if (!formData.lastName.trim()) newErrors.lastName = "Last name is required"
     if (!formData.username.trim()) {
       newErrors.username = "Username is required"
+    } else if (!/^[a-zA-Z0-9_]+$/.test(formData.username)) {
+      newErrors.username = "Username can only contain letters, numbers, and underscores"
     } else if (formData.username.length < 3) {
       newErrors.username = "Username must be at least 3 characters"
+    } else if (formData.username.length > 30) {
+      newErrors.username = "Username cannot be longer than 30 characters"
     }
     if (!formData.email.trim()) {
       newErrors.email = "Email is required"
@@ -71,18 +75,45 @@ export default function SignUpPage() {
   }
 
   const checkUsername = async (username: string) => {
-    if (username.length < 3) {
+    if (!username.trim()) {
       setUsernameStatus({ available: null, message: "", checking: false })
       return
     }
 
-    setUsernameStatus({ available: null, message: "", checking: true })
+    if (!/^[a-zA-Z0-9_]+$/.test(username)) {
+      setUsernameStatus({
+        available: false,
+        message: "Username can only contain letters, numbers, and underscores",
+        checking: false,
+      })
+      return
+    }
+
+    if (username.length < 3) {
+      setUsernameStatus({
+        available: false,
+        message: "Username must be at least 3 characters",
+        checking: false,
+      })
+      return
+    }
+
+    if (username.length > 30) {
+      setUsernameStatus({
+        available: false,
+        message: "Username cannot be longer than 30 characters",
+        checking: false,
+      })
+      return
+    }
+
+    setUsernameStatus({ available: null, message: "Checking username...", checking: true })
 
     try {
       const result = await checkUsernameAvailability(username)
       setUsernameStatus({
         available: result.available,
-        message: result.message,
+        message: result.available ? "Username is available!" : "Username is already taken",
         checking: false,
       })
     } catch (error) {
